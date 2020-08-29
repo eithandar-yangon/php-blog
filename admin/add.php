@@ -23,8 +23,7 @@ if($_POST){
 		);
 
 		if($result){
-			echo "<script>alert('Successfully added')</script>";
-			header('location:index.php');
+			echo "<script>alert('Successfully added');window.location.href='index.php'</script>";
 		}
 	}
 }

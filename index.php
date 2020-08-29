@@ -1,9 +1,18 @@
+<?php 
+
+session_start();
+require 'config/config.php';
+if(empty($_SESSION['user_id'])&& empty($_SESSION['logged_in'])){
+	header('location:login.php');
+}
+
+ ?>
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 3 | Widgets</title>
+  <title>Blog Site</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Font Awesome -->
@@ -26,150 +35,99 @@
       </div><!-- /.container-fluid -->
     </section>
 
+    <?php 
+    $stmt=$pdo->prepare("SELECT * FROM posts ORDER BY id");
+    $stmt->execute();
+    $result = $stmt->fetchAll();
+
+	  if(!empty($_GET['pageno'])){
+	    $pageno = $_GET['pageno'];
+	  }else{
+	    $pageno =1;
+	  }
+	    
+	  $numofrecs = 5;
+	  $offset = ($pageno - 1) * $numofrecs;
+
+	 if(empty($_POST['search'])){
+	   $stmt = $pdo->prepare("SELECT * FROM posts ORDER BY id DESC");
+	  $stmt->execute();
+	  $Rawresult = $stmt->fetchAll();
+	  $totalpage = ceil(count($Rawresult)/$numofrecs);
+
+	  $stmt = $pdo->prepare("SELECT * FROM posts LIMIT $offset , $numofrecs");
+	  $stmt->execute();
+	  $result = $stmt->fetchAll();
+	}else{
+	  $searchkey = $_POST['search'];
+	   $stmt = $pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$searchkey%' OR content LIKE '%$searchkey%' ORDER BY id DESC");
+	  $stmt->execute();
+
+	  $Rawresult = $stmt->fetchAll();
+	  $totalpage = ceil(count($Rawresult)/$numofrecs);
+
+	  $stmt = $pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$searchkey%' OR content LIKE '%$searchkey%' LIMIT $offset , $numofrecs");
+	  $stmt->execute();
+
+	  $result = $stmt->fetchAll();
+	}
+
+
+                   ?>
+
     <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-md-4">
+        <?php 
+        if ($result) {
+        	foreach ($result as $value) {
+        ?>
+        	<div class="col-md-4">
             <!-- Box Comment -->
             <div class="card card-widget">
               <div class="card-header">
                 <div class="card-title" style="float: none!important;text-align: center">
-                  <h4 >Blog Title</h4>
+                  <h4 ><?php echo $value['title']?></h4>
                 </div>
                 <!-- /.user-block -->
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-
-                <p>I took this photo this morning. What do you guys think?</p>
+                <a href="blogdetail.php?id=<?php echo $value['id'] ?>"><img class="img-fluid pad" src="admin/images/<?php echo $value['image'] ?>" style="width: 200px;height: 150px;" alt="Photo"></a>
               </div>
               
             
             </div>
             <!-- /.card -->
           </div>
-          <!-- /.col -->
+        <?php
+
+        	}
+        }
+        ?>
           
-          <!-- col 2 -->
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header">
-                <div class="card-title" style="float: none!important;text-align: center">
-                  <h4 >Blog Title</h4>
-                </div>
-                <!-- /.user-block -->
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-
-                <p>I took this photo this morning. What do you guys think?</p>
-              </div>
-              
-            
-            </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
-          <!-- col 3 -->
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header">
-                <div class="card-title" style="float: none!important;text-align: center">
-                  <h4 >Blog Title</h4>
-                </div>
-                <!-- /.user-block -->
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-
-                <p>I took this photo this morning. What do you guys think?</p>
-              </div>
-              
-            
-            </div>
-            <!-- /.card -->
-          </div>
           <!-- /.col -->
 
         </div>
         <!-- /.row -->
         <!-- row 2 -->
-        <div class="row">
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header">
-                <div class="card-title" style="float: none!important;text-align: center">
-                  <h4 >Blog Title</h4>
-                </div>
-                <!-- /.user-block -->
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
 
-                <p>I took this photo this morning. What do you guys think?</p>
-              </div>
-              
-            
-            </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
-          
-          <!-- col 2 -->
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header">
-                <div class="card-title" style="float: none!important;text-align: center">
-                  <h4 >Blog Title</h4>
-                </div>
-                <!-- /.user-block -->
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-
-                <p>I took this photo this morning. What do you guys think?</p>
-              </div>
-              
-            
-            </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
-          <!-- col 3 -->
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header">
-                <div class="card-title" style="float: none!important;text-align: center">
-                  <h4 >Blog Title</h4>
-                </div>
-                <!-- /.user-block -->
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-
-                <p>I took this photo this morning. What do you guys think?</p>
-              </div>
-              
-            
-            </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
-
-        </div>
+        
       </div><!-- /.container-fluid -->
+      <div class="row" style="float: right;margin-right: 0">
+      	 <nav >
+      		<ul class="pagination" style="float: right;">
+		        <li class="page-item"><a href="?pageno=1" class="page-link">First</a></li>
+		        <li class="page-item <?php if($pageno<= 1){echo 'disabled';} ?>" >
+		          <a href="<?php if($pageno <= 1){echo '#';}else {echo '?pageno='.($pageno-1);} ?>" class="page-link">Prev</a></li>
+		        <li class="page-item"><a href="#" class="page-link"><?php echo $pageno; ?></a></li>
+		        <li class="page-item <?php if($pageno >= $totalpage){echo 'disabled';} ?>" >
+		          <a href="<?php if($pageno>=$totalpage){echo '#';}else { echo '?pageno='.($pageno+1);} ?>" class="page-link">Next</a></li>
+        		<li class="page-item"><a href="?pageno=<?php echo $totalpage;  ?>" class="page-link">Last</a></li>
+      		</ul>
+    	</nav>
+      </div><br><br>
     </section>
     <!-- /.content -->
 
@@ -179,12 +137,16 @@
   </div>
   <!-- /.content-wrapper -->
 
-  <footer class="main-footer" style="margin-left: 0!important">
-    <div class="float-right d-none d-sm-block">
-      <b>Version</b> 3.0.5
+
+
+  <!-- Main Footer -->
+  <footer class="main-footer" style="margin-left: 0!important;">
+    <!-- To the right -->
+    <div class="float-right d-none d-sm-inline">
+      <a href="logout.php" type="button" class="btn btn-default">Logout</a> 
     </div>
-    <strong>Copyright &copy; 2014-2019 <a href="http://adminlte.io">AdminLTE.io</a>.</strong> All rights
-    reserved.
+    <!-- Default to the left -->
+    <strong>Copyright &copy; 2020 <a href="">A Programmer</a>.</strong> All rights reserved.
   </footer>
 
   <!-- Control Sidebar -->
