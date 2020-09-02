@@ -1,6 +1,8 @@
 <?php
-require '../config/config.php';
 session_start();
+require '../config/config.php';
+require '../config/common.php';
+
 if(empty($_SESSION['user_id'])&& empty($_SESSION['logged_in'])){
   header('location:login.php');
 }
@@ -78,9 +80,9 @@ if(empty($_SESSION['user_id'])&& empty($_SESSION['logged_in'])){
                     ?>
                       <tr>
                       <td><?php echo $id ?></td>
-                      <td><?php echo $value['title'] ?></td>
+                      <td><?php echo escape($value['title']); ?></td>
                       <td>
-                        <?php echo substr($value['content'],0,400)?> 
+                        <?php echo escape(substr($value['content'],0,400));?> 
                       </td>
                       <td class="btn-group">
                         <div class="container"><a href="edit.php?id=<?php echo $value['id'] ?>" type="button" class="btn btn-warning">Edit</a></div>

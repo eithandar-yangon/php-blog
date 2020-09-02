@@ -78,9 +78,9 @@ if(empty($_SESSION['user_id'])&& empty($_SESSION['logged_in'])){
                     ?>
                       <tr>
                       <td><?php echo $id; ?></td>
-                      <td><?php echo $value['name']; ?></td>
+                      <td><?php echo escape($value['name']) ; ?></td>
                       <td>
-                        <?php echo $value['email'];?> 
+                        <?php echo escape($value['email']);?> 
                       </td>
                       <td>
                         <?php if($value['role']==1){echo 'Admin';}else{ echo 'User';}?> 

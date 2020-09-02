@@ -88,7 +88,7 @@ if(empty($_SESSION['user_id'])&& empty($_SESSION['logged_in'])){
             <div class="card card-widget">
               <div class="card-header">
                 <div class="card-title" style="float: none!important;text-align: center">
-                  <h4 ><?php echo $value['title']?></h4>
+                  <h4 ><?php echo escape($value['title']);?></h4>
                 </div>
                 <!-- /.user-block -->
               </div>

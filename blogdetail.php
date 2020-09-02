@@ -84,7 +84,7 @@ if($_POST){
             <div class="card card-widget">
               <div class="card-header">
                 <div class="card-title" style="float: none!important;text-align: center">
-                  <h4 ><?php echo $result[0]['title']; ?></h4>
+                  <h4 ><?php echo escape($result[0]['title']); ?></h4>
                 </div>
                 <!-- /.user-block -->
                 
@@ -93,7 +93,7 @@ if($_POST){
               <div class="card-body">
                 <img class="img-fluid pad" src="admin/images/<?php echo $result[0]['image'] ?>" alt="Photo" style="width: 100%">
                 <br><br>
-                <p><?php echo $result[0]['content']; ?></p>
+                <p><?php echo escape($result[0]['content']); ?></p>
                 <a href="index.php" type="button" class="btn btn-primary float-right">Go Back</a>
               </div>
               <!-- /.card-body -->
@@ -107,11 +107,11 @@ if($_POST){
                     <div class="comment-text" style="margin-left: 0">
                       <?php foreach ($cmresult as $key => $value) { ?>
                     <span class="username">
-                      <?php echo $auresult[$key][0]['name'];?>
+                      <?php echo escape($auresult[$key][0]['name']);?>
 
-                      <span class="text-muted float-right"><?php echo $value['created_at'] ?></span>
+                      <span class="text-muted float-right"><?php echo escape($value['created_at']); ?></span>
                     </span><!-- /.username -->
-                    <?php echo $value['content']; ?>
+                    <?php echo escape($value['content']); ?>
                     </div>
                   <?php } ?>
                   <?php

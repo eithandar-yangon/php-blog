@@ -70,13 +70,13 @@ if($_POST){
                   <input type="hidden" name="_token" value="<?php echo $_SESSION['_token']; ?>">
               		<div class="form-group">
               			<label>Name</label>
-              			<input type="text" name="name" value="<?php echo $Rawresult[0]['name'] ?>" class="form-control">
+              			<input type="text" name="name" value="<?php echo escape($Rawresult[0]['name']);?>" class="form-control">
                     <p style="color: red"><?php echo empty($nameError) ? '' : '*'.$nameError; ?></p>
 
               		</div>
               		<div class="form-group">
               			<label>Email</label>
-              			<input class="form-control" value="<?php echo $Rawresult[0]['email'] ?>" name="email">
+              			<input class="form-control" value="<?php echo escape($Rawresult[0]['email']);?>" name="email">
                     <p style="color: red"><?php echo empty($emailError) ? '' : '*'.$emailError; ?></p>
 
               		</div>
