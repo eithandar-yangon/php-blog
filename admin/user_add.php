@@ -6,10 +6,23 @@ if(empty($_SESSION['user_id'])&& empty($_SESSION['logged_in'])){
 }
 
 if($_POST){
-	
-
-		$name = $_POST['name'];
-		$email = $_POST['email'];
+	if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || strlen($_POST['password'])< 6){
+    if(empty($_POST['name'])){
+      $nameError = "Name can not be blank";
+    }
+    if(empty($_POST['email'])){
+      $emailError = "Email can not be blank";
+    }
+    
+    if(strlen($_POST['password'])<6) {
+      $passwordError = "Password must be 6 characters";
+    }
+    if(empty($_POST['password'])){
+      $passwordError = "Password can not be blank";
+    }
+  }else{
+    $name = $_POST['name'];
+    $email = $_POST['email'];
     $password = $_POST['password'];
     if(empty($_POST['role'])){
       $role = 0;
@@ -34,6 +47,7 @@ if($_POST){
     }
 
     }
+  }
 }
 ?>
 
@@ -51,15 +65,20 @@ if($_POST){
               	<form action="user_add.php" enctype="multipart/form-data" method="post">
               		<div class="form-group">
               			<label>Name</label>
-              			<input type="text" name="name" class="form-control" required=""  placeholder="Name">
+              			<input type="text" name="name" class="form-control" placeholder="Name">
+                    <p style="color: red"><?php echo empty($nameError) ? '' : '*'.$nameError; ?></p>
+
               		</div>
               		<div class="form-group">
               			<label>Email</label>
-              			<input class="form-control" name="email" required="" rows="8" cols="90"  placeholder="Email">
+              			<input class="form-control" name="email" rows="8" cols="90"  placeholder="Email">
+                    <p style="color: red"><?php echo empty($emailError) ? '' : '*'.$emailError; ?></p>
+
               		</div>
                   <div class="form-group">
                     <label>Password</label>
                     <input type="password" name="password" class="form-control" placeholder="Password">
+                    <p style="color: red"><?php echo empty($passwordError) ? '' : '*'.$passwordError; ?></p>
                   </div>
                   <div class="form-group">
                     <label>Admin</label>

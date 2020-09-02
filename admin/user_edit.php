@@ -10,11 +10,23 @@ $stmt->execute();
 $Rawresult = $stmt->fetchAll();
 
 if($_POST){
-		$id = $_GET['id'];
-		$name = $_POST['name'];
-		$email = $_POST['email'];
+  if(empty($_POST['name']) || empty($_POST['email'])){
+    if(empty($_POST['name'])){
+      $nameError = "Name can not be blank";
+    }
+    if(empty($_POST['email'])){
+      $emailError = "Email can not be blank";
+    }
+  }elseif (!empty($_POST['password']) AND strlen($_POST['password'])<6) {  
+
+      $passwordError = "Password must be 5 characters";
+  }else{
+    $id = $_GET['id'];
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
     if(empty($_POST['role'])){
-      $role = 0	;
+      $role = 0 ;
     }else{
       $role = 1;
     }
@@ -26,13 +38,19 @@ if($_POST){
     if($user){
       echo "<script>alert('Email Duplicated')</script>";
     }else{
-      $stmt=$pdo->prepare("UPDATE users SET name='$name',email='$email',role='$role' WHERE id='$id'");
+      if($password!=null){
+        $stmt=$pdo->prepare("UPDATE users SET name='$name',email='$email',password='$password', role='$role' WHERE id='$id'");
+      }if($password==null){
+        $stmt=$pdo->prepare("UPDATE users SET name='$name',email='$email', role='$role' WHERE id='$id'");
+      }
       $result= $stmt->execute();
+      
       if($result){
       echo "<script>alert('Successfully updated');window.location.href='user_list.php'</script>";
     }
 
     }
+  }	
 }
 ?>
 
@@ -50,12 +68,22 @@ if($_POST){
               	<form action="" enctype="multipart/form-data" method="post">
               		<div class="form-group">
               			<label>Name</label>
-              			<input type="text" name="name" value="<?php echo $Rawresult[0]['name'] ?>" class="form-control" required="">
+              			<input type="text" name="name" value="<?php echo $Rawresult[0]['name'] ?>" class="form-control">
+                    <p style="color: red"><?php echo empty($nameError) ? '' : '*'.$nameError; ?></p>
+
               		</div>
               		<div class="form-group">
               			<label>Email</label>
-              			<input class="form-control" value="<?php echo $Rawresult[0]['email'] ?>" name="email" required="">
+              			<input class="form-control" value="<?php echo $Rawresult[0]['email'] ?>" name="email">
+                    <p style="color: red"><?php echo empty($emailError) ? '' : '*'.$emailError; ?></p>
+
               		</div>
+                  <div class="form-group">
+                    <label>Password</label><br>
+                    <span style="font-size: 12px">Password already have</span>
+                    <input type="password" name="password" class="form-control" placeholder="Password">
+                    <p style="color: red"><?php echo empty($passwordError) ? '' : '*'.$passwordError; ?></p>
+                  </div>
                   <div class="form-group">
                     <label>Admin</label>
                     <input type="checkbox" name="role" value="1" <?php if($Rawresult[0]['role']==1){echo 'checked';} ?>>

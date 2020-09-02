@@ -5,31 +5,48 @@ if(empty($_SESSION['user_id'])&& empty($_SESSION['logged_in'])){
   header('location:login.php');
 }
 
+
+
 if($_POST){
-	$file = 'images/'.($_FILES['image']['name']);
-	$imageType = pathinfo($file,PATHINFO_EXTENSION);
+  // print_r($_FILES['image']);exit();
+	if(empty($_POST['title']) || empty($_POST['content']) || empty($_FILES['image']['name'])){
+    if(empty($_POST['title'])){
+      $titleError = "Title can not be blank";
+    }
+    if(empty($_POST['content'])){
+      $contentError = "Content can not be blank";
+    }
+    if(empty($_FILES['image']['name'])){
 
-	if($imageType!='jpg' && $imageType!='png' && $imageType!='jpeg'){
-		echo "<script>alert('Image must be png,jpg or jpeg')</script>";
-	}else{
+      $imageError = "Image can not be blank";
+    }
+  }else{
+    $file = 'images/'.($_FILES['image']['name']);
+  $imageType = pathinfo($file,PATHINFO_EXTENSION);
 
-		$title = $_POST['title'];
-		$content = $_POST['content'];
-		$image = $_FILES['image']['name'];
-		move_uploaded_file($_FILES['image']['tmp_name'], $file);
-		$stmt=$pdo->prepare('INSERT INTO posts(title,content,image,author_id) VALUES (:title,:content,:image,:author_id)');
-		$result= $stmt->execute(
-			array(':title'=>$title,':content'=>$content,':image'=>$image,':author_id'=>$_SESSION['user_id'])
-		);
+  if($imageType!='jpg' && $imageType!='png' && $imageType!='jpeg'){
+    
+    echo "<script>alert('Image must be png,jpg or jpeg')</script>";
+  }else{
 
-		if($result){
-			echo "<script>alert('Successfully added');window.location.href='index.php'</script>";
-		}
-	}
+    $title = $_POST['title'];
+    $content = $_POST['content'];
+    $image = $_FILES['image']['name'];
+    move_uploaded_file($_FILES['image']['tmp_name'], $file);
+    $stmt=$pdo->prepare('INSERT INTO posts(title,content,image,author_id) VALUES (:title,:content,:image,:author_id)');
+    $result= $stmt->execute(
+      array(':title'=>$title,':content'=>$content,':image'=>$image,':author_id'=>$_SESSION['user_id'])
+    );
+
+    if($result){
+      echo "<script>alert('Successfully added');window.location.href='index.php'</script>";
+    }
+  }
+  }
 }
 ?>
 
-<?php include('header.html'); ?>
+<?php include('header.php'); ?>
 
     <!-- Main content -->
     <div class="content">
@@ -43,15 +60,18 @@ if($_POST){
               	<form action="add.php" enctype="multipart/form-data" method="post">
               		<div class="form-group">
               			<label>Title</label>
-              			<input type="text" name="title" class="form-control" required="">
+              			<input type="text" name="title" class="form-control">
+                    <p style="color: red"><?php echo empty($titleError) ? '' : '*'.$titleError; ?></p>
               		</div>
               		<div class="form-group">
               			<label>Content</label>
-              			<textarea class="form-control" name="content" required="" rows="8" cols="90"></textarea>
+              			<textarea class="form-control" name="content" rows="8" cols="90"></textarea>
+                    <p style="color: red"><?php echo empty($contentError) ? '' : '*'.$contentError; ?></p>
               		</div>
               		<div class="form-group">
-              			<label>Image</label><br>
-              			<input type="file" name="image" required="">
+              			<label>Image</label>
+              			<input type="file" name="image">
+                    <p style="color: red"><?php echo empty($imageError) ? '' : '*'.$imageError;  ?></p><br>
               		</div>
               		<div class="form-group">
               			<input type="submit" value="SUBMIT" class="btn btn-success">

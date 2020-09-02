@@ -3,27 +3,43 @@ require 'config/config.php';
 session_start();
 
 if($_POST){
-	$email = $_POST['email'];
-	$name = $_POST['name'];
-	$password = $_POST['password'];
+    if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || strlen($_POST['password'])<6){
+    if(empty($_POST['name'])){
+      $nameError = "Name can not be blank";
+    }
+    if(empty($_POST['email'])){
+      $emailError = "Email can not be blank";
+    }
+    
+    if(strlen($_POST['password']) < 6) {
+      $passwordError = "Password must be 6 characters";
+    }
+    if(empty($_POST['password'])){
+      $passwordError = "Password can not be blank";
+    }
+  }else{
+      $email = $_POST['email'];
+  $name = $_POST['name'];
+  $password = $_POST['password'];
 
-	$stmt = $pdo->prepare('SELECT * FROM users WHERE email=:email');
-	$stmt->bindValue(':email',$email);
-	$stmt->execute();
-	$user=$stmt->fetch(PDO::FETCH_ASSOC);
+  $stmt = $pdo->prepare('SELECT * FROM users WHERE email=:email');
+  $stmt->bindValue(':email',$email);
+  $stmt->execute();
+  $user=$stmt->fetch(PDO::FETCH_ASSOC);
 
-	if($user){
-		echo "<script>alert('Account already exit')</script>";
-	}else{
-		$stmt=$pdo->prepare("INSERT INTO users(name,email,password) VALUES (:name,:email,:password)");
-		$result= $stmt->execute(
-			array(':name'=>$name,':email'=>$email,':password'=>$password)
-		);
+  if($user){
+    echo "<script>alert('Account already exit')</script>";
+  }else{
+    $stmt=$pdo->prepare("INSERT INTO users(name,email,password) VALUES (:name,:email,:password)");
+    $result= $stmt->execute(
+      array(':name'=>$name,':email'=>$email,':password'=>$password)
+    );
 
-		if($result){
-			echo "<script>alert('Successfully Register');window.location.href='login.php'</script>";
-		}
-	}
+    if($result){
+      echo "<script>alert('Successfully Register');window.location.href='login.php'</script>";
+    }
+  }
+    }
 }
 ?>
 
@@ -66,6 +82,7 @@ if($_POST){
             </div>
           </div>
         </div>
+        <p style="color: red"><?php echo empty($nameError) ? '' : '*'.$nameError; ?></p>
         <div class="input-group mb-3">
           <input type="email" name="email" class="form-control" placeholder="Email">
           <div class="input-group-append">
@@ -74,6 +91,7 @@ if($_POST){
             </div>
           </div>
         </div>
+        <p style="color: red"><?php echo empty($emailError) ? '' : '*'.$emailError; ?></p>
         <div class="input-group mb-3">
           <input type="password" name="password" class="form-control" placeholder="Password">
           <div class="input-group-append">
@@ -82,6 +100,7 @@ if($_POST){
             </div>
           </div>
         </div>
+        <p style="color: red"><?php echo empty($passwordError) ? '' : '*'.$passwordError; ?></p>
         <div class="row">
           
           <!-- /.col -->

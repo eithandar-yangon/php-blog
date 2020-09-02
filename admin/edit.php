@@ -7,34 +7,42 @@ if(empty($_SESSION['user_id'])&& empty($_SESSION['logged_in'])){
 
 
 if($_POST){
-	$id=$_POST['id'];
-	$title = $_POST['title'];
-	$content = $_POST['content'];
-	if($_FILES['image']['name']!=null){
-		$file = 'images/'.($_FILES['image']['name']);
-	$imageType = pathinfo($file,PATHINFO_EXTENSION);
+  if(empty($_POST['title']) || empty($_POST['content'])){
+    if(empty($_POST['title'])){
+      $titleError = "Title can not be blank";
+    }
+    if(empty($_POST['content'])){
+      $contentError = "Content can not be blank";
+    }
+  }else{
+    $id=$_POST['id'];
+  $title = $_POST['title'];
+  $content = $_POST['content'];
+  if($_FILES['image']['name']!=null){
+    $file = 'images/'.($_FILES['image']['name']);
+  $imageType = pathinfo($file,PATHINFO_EXTENSION);
 
-	if($imageType!='jpg' && $imageType!='png' && $imageType!='jpeg'){
-		echo "<script>alert('Image must be png,jpg or jpeg')</script>";
-	}else{
-
-		$image = $_FILES['image']['name'];
-		move_uploaded_file($_FILES['image']['tmp_name'], $file);
-		$stmt=$pdo->prepare("UPDATE posts SET title='$title',content='$content',image='$image' WHERE id= '$id'");
-		$result= $stmt->execute();
-			
-		if($result){
-			echo "<script>alert('Successfully added');window.location.href='index.php';</script>";
-		}
-	}
-	}else{
-		$stmt=$pdo->prepare("UPDATE posts SET title='$title',content='$content',image='$image' WHERE id= '$id'");
-		$result= $stmt->execute();
-			
-		if($result){
-			echo "<script>alert('Successfully added');window.location.href='index.php';</script>";
-		}
-	}
+  if($imageType!='jpg' && $imageType!='png' && $imageType!='jpeg'){
+    echo "<script>alert('Image must be png,jpg or jpeg')</script>";
+  }else{
+      $image = $_FILES['image']['name'];
+      move_uploaded_file($_FILES['image']['tmp_name'], $file);
+      $stmt=$pdo->prepare("UPDATE posts SET title='$title',content='$content',image='$image' WHERE id= '$id'");
+      $result= $stmt->execute();
+        
+      if($result){
+        echo "<script>alert('Successfully added');window.location.href='index.php';</script>";
+      }
+      }
+    }else{
+      $stmt=$pdo->prepare("UPDATE posts SET title='$title',content='$content',image='$image' WHERE id= '$id'");
+      $result= $stmt->execute();
+        
+      if($result){
+        echo "<script>alert('Successfully updated');window.location.href='index.php';</script>";
+      }
+    }
+  }    
 }
 
 $stmt = $pdo->prepare('SELECT * FROM posts WHERE id='.$_GET['id']);
@@ -42,7 +50,7 @@ $stmt->execute();
 $result = $stmt->fetchAll();
 ?> 
 
-<?php include('header.html'); ?>
+<?php include('header.php'); ?>
 
     <!-- Main content -->
     <div class="content">
@@ -57,16 +65,19 @@ $result = $stmt->fetchAll();
               		<input type="hidden" name="id" value="<?php echo $result[0]['id'] ?> ">
               		<div class="form-group">
               			<label>Title</label>
-              			<input type="text" name="title" class="form-control" required="" value="<?php echo $result[0]['title'] ?> ">
+              			<input type="text" name="title" class="form-control" value="<?php echo $result[0]['title'] ?> ">
+                    <p style="color: red"><?php echo empty($titleError) ? '' : '*'.$titleError; ?></p>
               		</div>
               		<div class="form-group">
               			<label>Content</label>
-              			<textarea class="form-control" name="content" required="" rows="8" cols="90"><?php echo $result[0]['content'] ?></textarea>
+              			<textarea class="form-control" name="content"  rows="8" cols="90"><?php echo $result[0]['content'] ?></textarea>
+                    <p style="color: red"><?php echo empty($contentError) ? '' : '*'.$contentError; ?></p>
               		</div>
               		<div class="form-group">
               			<label>Image</label><br>
               			<img src="images/<?php echo $result[0]['image'] ?> "  width="150" height="150">
               			<input type="file" name="image">
+                    <p style="color: red"><?php echo empty($imageError) ? '' : '*'.$imageError;  ?></p><br>
               		</div>
               		<div class="form-group">
               			<input type="submit" value="SUBMIT" class="btn btn-success">
