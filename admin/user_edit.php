@@ -1,5 +1,6 @@
 <?php
 require '../config/config.php';
+require '../config/common.php';
 session_start();
 if(empty($_SESSION['user_id'])&& empty($_SESSION['logged_in'])){
   header('location:login.php');
@@ -66,6 +67,7 @@ if($_POST){
               <!-- /.card-header -->
               <div class="card-body">
               	<form action="" enctype="multipart/form-data" method="post">
+                  <input type="hidden" name="_token" value="<?php echo $_SESSION['_token']; ?>">
               		<div class="form-group">
               			<label>Name</label>
               			<input type="text" name="name" value="<?php echo $Rawresult[0]['name'] ?>" class="form-control">

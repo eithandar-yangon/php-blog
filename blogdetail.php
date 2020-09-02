@@ -130,6 +130,7 @@ if($_POST){
                 <form action="" method="post">
                   <img class="img-fluid img-circle img-sm" src="dist/img/user4-128x128.jpg" alt="Alt Text">
                   <!-- .img-push is used to add margin to elements next to floating images -->
+                  <input type="hidden" name="_token" value="<?php echo $_SESSION['_token']; ?>">
                   <div class="img-push">
                     <input type="text" name="comment" class="form-control form-control-sm" placeholder="Press enter to post comment">
                     <p style="color: red"><?php echo empty($cmtError) ? '' : '*'.$cmtError; ?></p>

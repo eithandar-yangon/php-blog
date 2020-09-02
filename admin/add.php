@@ -1,14 +1,13 @@
 <?php
-require '../config/config.php';
 session_start();
+require '../config/config.php';
+require '../config/common.php';
+
 if(empty($_SESSION['user_id'])&& empty($_SESSION['logged_in'])){
   header('location:login.php');
 }
 
-
-
 if($_POST){
-  // print_r($_FILES['image']);exit();
 	if(empty($_POST['title']) || empty($_POST['content']) || empty($_FILES['image']['name'])){
     if(empty($_POST['title'])){
       $titleError = "Title can not be blank";
@@ -58,6 +57,7 @@ if($_POST){
               <!-- /.card-header -->
               <div class="card-body">
               	<form action="add.php" enctype="multipart/form-data" method="post">
+                  <input type="hidden" name="_token" value="<?php echo $_SESSION['_token']; ?>">
               		<div class="form-group">
               			<label>Title</label>
               			<input type="text" name="title" class="form-control">
